@@ -1,14 +1,15 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Cropper from 'react-easy-crop'
 import getCroppedImg from '../cropImage'
 import { Box, Button, Slider, Stack } from '@mui/material'
+import { useAppContext } from '../context/appContext'
  
  
 
 const ImageCropDialog = ({id,imageUrl,zoomInit,cropInit,aspectInit,onCancel,setCroppedImageFor,resetImage}) => {
    
     
-  
+  const {cropReset,setCropReset} =useAppContext()
     const aspectRatios =[
         {value:9/16, text:"4/3"}
     ]
@@ -26,17 +27,19 @@ const ImageCropDialog = ({id,imageUrl,zoomInit,cropInit,aspectInit,onCancel,setC
     
 
      
-   
+     
     const [zoom,setZoom] = useState(zoomInit)
     const [crop,setCrop] = useState(cropInit)
     const [ aspect,setAspect] = useState(aspectInit)
     const [ croppedAreaPixels,setCroppedAreaPixels] = useState(null)
     
+   
   
     const onZoomChange =(zoom)=>{
         setZoom(zoom)
-
     }
+
+   
 
     const onResetImage =()=>{
         resetImage(id)
@@ -52,8 +55,21 @@ const ImageCropDialog = ({id,imageUrl,zoomInit,cropInit,aspectInit,onCancel,setC
 
     const onCrop = async()=>{
         const croppedImageUrl = await getCroppedImg(imageUrl,croppedAreaPixels)
-        setCroppedImageFor (id,crop,zoom,aspect,croppedImageUrl)
+        setCroppedImageFor (crop,zoom,aspect,croppedImageUrl)
     }
+
+    const resetZoom=()=>{
+        if(cropReset===true){
+            setZoom(1)
+            setCropReset(false)
+
+        }
+        
+    }
+
+    useEffect(()=>{
+       resetZoom()
+    },[cropReset])
   
     return (
 

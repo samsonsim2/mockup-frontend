@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer, useContext } from "react";
+import { useState, useEffect, useReducer, useContext, useRef } from "react";
 // import { database, storage } from "../firebase";
 // import { onChildAdded, push, ref, set } from "firebase/database";
 import React from "react";
@@ -18,9 +18,32 @@ const AppProvider = ({ children }) => {
     cta:"Learn more",
     message:"lorem ipsum dolor",
     brandName:"",
-    storiesCta:"Learn moree"
+    storiesCta:"Learn moree",
+    location:"Location",
+    addYours:"write prompt"
   
   }
+  const stockImages =[
+    "/images/placeholder/woman.png",
+    "/images/placeholder/man.png",
+    "/images/placeholder/group.png",
+    "/images/placeholder/product1.png",
+  ]
+ 
+  
+ 
+
+  const filters={
+    brightness:1,
+    saturation:1,
+    contrast:1
+  }
+
+  
+  const canvasRef = useRef(null);
+  function setCanvasRef(ref) {
+    canvasRef.current = ref;
+}
 
  
   const [userId, setUserId] = useState("");
@@ -28,13 +51,50 @@ const AppProvider = ({ children }) => {
   const [selectedMockup,setSelectedMockup]=useState()
   const [mockup,setMockup] = useState() 
   const [template,setTemplate]=useState("images/feed.png")
-  const [values,setValues] = useState(initDetails)
+  const [values,setValues] = useState(initDetails) 
+  const [filterValues,setFilterValues] = useState(filters)
+  const [isDrawing,setIsDrawing] = useState(false)
+  const [locationSticker,setLocationSticker]=useState(false)
+  const [addYoursSticker,setAddYoursSticker]=useState(false)
+
+  const[cropReset,setCropReset]=useState(true)
  
+
+  const initData = 
+  {
+     
+    imageUrl:stockImages[0],
+    croppedImageUrl:null
+  } 
+
+  const [stock,setStock] =useState(initData)
+  const [selectedStock,setSelectedStock] = useState(null) 
+
+  const onCancel =()=>{
+    setSelectedStock(null)
+        
+  }
+
+  const  setCroppedImageFor =(crop,zoom,aspect,croppedImageUrl)=>{      
+    const newStock = {...stock, croppedImageUrl,crop,zoom,aspect}
+    console.log(newStock )
+    setStock(newStock)
+    setSelectedStock(null)  
+  }
+
+  const resetImage = ( )=>{
+    setCroppedImageFor()
+  }
+
+
  
 
   return (
     <AppContext.Provider
       value={{
+        onCancel,
+        setCroppedImageFor,
+        resetImage,
        userId,
        setUserId,
        userMockups,
@@ -46,7 +106,24 @@ const AppProvider = ({ children }) => {
        setValues,
        values,
        mockup,
-       setMockup
+       setMockup,
+       filterValues,
+       setFilterValues,       
+       stock,
+       setStock,
+       stockImages,
+       selectedStock,
+       setSelectedStock,
+       isDrawing,setIsDrawing,
+       canvasRef,
+       setCanvasRef,
+       locationSticker,
+       setLocationSticker,
+       setAddYoursSticker,
+       addYoursSticker,
+       cropReset,
+       setCropReset
+        
       }}
     >
       {children}

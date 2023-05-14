@@ -1,18 +1,17 @@
 import { Box, Button } from '@mui/material';
 import React, { useRef, useEffect, useState } from 'react';
 import ImageCropDialog from './ImageCropDialog';
+import { useAppContext } from '../context/appContext';
  
-const initData = 
-  {
-    id:1,
-    imageUrl:"images/car1.png",
-    croppedImageUrl:null
-  } 
-
+ 
 function ImageCanvas() {
+
+  const {onCancel,
+    setCroppedImageFor,
+    resetImage,stock,setStock,selectedStock,setSelectedStock,filterValues,stockImage,stockImages} = useAppContext()
+
   
-    const [cars,setCars] =useState(initData)
-    const [selectedCar,setSelectedCar] = useState(null)    
+    
   const divRef = useRef(null);
      
    
@@ -21,7 +20,7 @@ function ImageCanvas() {
   useEffect(() => {
     const ctx = canvasRef.current.getContext('2d');
     const image = new Image();
-    image.src = cars.croppedImageUrl?cars.croppedImageUrl: cars.imageUrl;
+    image.src = stock.croppedImageUrl?stock.croppedImageUrl: stock.imageUrl;
     image.onload = () => {
         let loadedImageWidth = image.width;
         let loadedImageHeight = image.height;
@@ -37,37 +36,25 @@ function ImageCanvas() {
     
     ctx.globalAlpha = 1;
     
-    ctx.filter = "sepia(1)"
+    ctx.filter = `brightness(${filterValues.brightness}) saturate(${filterValues.saturation}) contrast(${filterValues.contrast})`
+    console.log(filterValues)
 
-  }, [cars.croppedImageUrl]);
+  }, [stock.croppedImageUrl,filterValues,stock]);
 
-  const onCancel =()=>{
-    setSelectedCar(null)
-        
-  }
 
-  const  setCroppedImageFor =(id,crop,zoom,aspect,croppedImageUrl)=>{ 
-     
-    const newCar = {...cars, croppedImageUrl,crop,zoom,aspect}
-    console.log(newCar)
-    setCars(newCar)
-    setSelectedCar(null)  
-  }
+   
 
-  const resetImage = (id)=>{
-    setCroppedImageFor(id)
-  }
-  
+   
 
   return (<>
 
-    <Box   margin="auto" width="250px" height="500px" position="relative" sx={{display:"flex" ,justifyContent:"center" ,alignItems:"center", background:"none"}}  ref={divRef}>
-      {selectedCar? <ImageCropDialog 
-      id={selectedCar.id} 
-      imageUrl={selectedCar.imageUrl} 
-      cropInit={selectedCar.crop}
-      zoomInit={selectedCar.zoom}
-      aspectInit={selectedCar.aspect}
+    <Box     width="250px" height="500px"   sx={{  postion:"absolute" ,background:"none",borderRadius:"20px"   }}  ref={divRef}>
+      {selectedStock? <ImageCropDialog 
+       
+      imageUrl={selectedStock.imageUrl} 
+      cropInit={selectedStock.crop}
+      zoomInit={selectedStock.zoom}
+      aspectInit={selectedStock.aspect}
       onCancel={onCancel}
       setCroppedImageFor={setCroppedImageFor}
       resetImage={resetImage}
@@ -75,9 +62,11 @@ function ImageCanvas() {
       </Box>
 
   
-    <canvas style ={{ zIndex:"50",position:"absolute" }} ref={canvasRef} width={250} height={500} />
+    <canvas style ={{ zIndex:"50",position:"absolute",borderRadius:"60px" }} ref={canvasRef} width={240} height={490} />
     <Button>dsa</Button>
-    <Button sx={{zIndex:"100000",position:"absolute"}}onClick={()=>setSelectedCar(cars)}>Crop</Button>
+    {/* <Button sx={{zIndex:"100000",position:"absolute"}}onClick={()=>setSelectedStock(stock)}>Crop</Button> */}
+    
+    
     </>
     
   );

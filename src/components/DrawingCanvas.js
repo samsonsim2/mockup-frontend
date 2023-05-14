@@ -1,15 +1,16 @@
 import { Box, Button, alpha } from '@mui/material';
 import {useOnDraw} from './Hooks';
 import { useEffect, useState } from 'react';
-   
+import { useAppContext } from '../context/appContext';
+    
 const Canvas = ({
     width,
     height,
     src
 }) => {
 
-    const [isDrawing,setIsDrawing] = useState(false)
-    
+    // const [isDrawing,setIsDrawing] = useState(false)
+    const{isDrawing,setIsDrawing} = useAppContext()
     useEffect(() => {
         const ctx = canvasRef.current.getContext('2d');
         const image = new Image();
@@ -59,13 +60,7 @@ const Canvas = ({
     }
 
     
-
-   console.log()
-
-// function adjustments(ctx){
-//     console.log(ctx)
-//     ctx.filter =`brightness(5%) )`
-// }
+ 
     return(<> 
     <Box sx={{pointerEvents:isDrawing?"auto":"none"}}>
         <canvas
@@ -76,11 +71,10 @@ const Canvas = ({
         ref={setCanvasRef}
     />
     </Box>
-    <Box sx={{position:"absolute"}}>
-    <Button onClick={()=>setIsDrawing(!isDrawing)} >draw</Button>
-    <Button onClick={()=>clearCanvas(width,height)} >clear</Button>
+    <Box sx={{position:"absolute",}}>
     
-    <Button  >Canvas</Button>
+    
+     
     </Box>
     </>
     
@@ -94,6 +88,9 @@ export default Canvas;
 
 const canvasStyle = {
     border: "1px solid black",
+    position:"absolute",
+    top:0,
+    left:0,
     background:"transparent",
    
      

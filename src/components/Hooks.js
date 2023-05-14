@@ -1,19 +1,20 @@
 import { useEffect, useRef, useState } from "react";
+import { useAppContext } from "../context/appContext";
  
 export function useOnDraw(onDraw) {
-    
+    const{canvasRef,setCanvasRef} = useAppContext()
 
-    const canvasRef = useRef(null);
+    // const canvasRef = useRef(null);
     const isDrawingRef = useRef(false);
     const prevPointRef = useRef(null);
- 
+
 
     const mouseMoveListenerRef = useRef(null);
     const mouseUpListenerRef = useRef(null);
-    
-    function setCanvasRef(ref) {
-        canvasRef.current = ref;
-    }
+
+    // function setCanvasRef(ref) {
+    //     canvasRef.current = ref;
+    // }
 
     function onCanvasMouseDown() {
         isDrawingRef.current = true;
@@ -22,9 +23,9 @@ export function useOnDraw(onDraw) {
     useEffect(() => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
-        
+
         ctx.globalAlpha = 1; // Set alpha value to 0.5 for 50% transparency
-       
+
       }, []);
 
     useEffect(() => {
@@ -41,7 +42,7 @@ export function useOnDraw(onDraw) {
 
         }
 
-        
+
         function initMouseMoveListener() {
             const mouseMoveListener = (e) => {
                 if (isDrawingRef.current && canvasRef.current ) {
@@ -86,22 +87,22 @@ export function useOnDraw(onDraw) {
         ctx.clearRect(0,0,width,height)
 
 
-        
+
     }
 
-    
+
 
     return {
         setCanvasRef,
         canvasRef,
         onCanvasMouseDown,
         clearCanvas,
-         
-         
+
+
     }
-    
+
 
 };
 
- 
+
 
