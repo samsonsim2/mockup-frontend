@@ -10,7 +10,7 @@ export function useOnDraw(onDraw) {
 
     const mouseMoveListenerRef = useRef(null);
     const mouseUpListenerRef = useRef(null);
-
+    
     function setCanvasRef(ref) {
         canvasRef.current = ref;
     }
@@ -22,8 +22,9 @@ export function useOnDraw(onDraw) {
     useEffect(() => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
+        
         ctx.globalAlpha = 1; // Set alpha value to 0.5 for 50% transparency
-         
+       
       }, []);
 
     useEffect(() => {
@@ -92,6 +93,7 @@ export function useOnDraw(onDraw) {
 
     return {
         setCanvasRef,
+        canvasRef,
         onCanvasMouseDown,
         clearCanvas,
          

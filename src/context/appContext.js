@@ -13,11 +13,22 @@ const AppContext = React.createContext();
 const AppProvider = ({ children }) => {
   // State values
   
+  // Form data 
+  const initDetails={
+    cta:"Learn more",
+    message:"lorem ipsum dolor",
+    brandName:"",
+    storiesCta:"Learn moree"
   
+  }
+
  
   const [userId, setUserId] = useState("");
   const[userMockups,setUserMockups]=useState([])
   const [selectedMockup,setSelectedMockup]=useState()
+  const [mockup,setMockup] = useState() 
+  const [template,setTemplate]=useState("images/feed.png")
+  const [values,setValues] = useState(initDetails)
  
  
 
@@ -29,7 +40,13 @@ const AppProvider = ({ children }) => {
        userMockups,
        setUserMockups,
        selectedMockup,
-       setSelectedMockup
+       setSelectedMockup,
+       template,
+       setTemplate,
+       setValues,
+       values,
+       mockup,
+       setMockup
       }}
     >
       {children}

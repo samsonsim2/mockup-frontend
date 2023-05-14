@@ -1,20 +1,34 @@
 import { Box, Button, alpha } from '@mui/material';
 import {useOnDraw} from './Hooks';
-import { useState } from 'react';
-  
+import { useEffect, useState } from 'react';
+   
 const Canvas = ({
     width,
-    height
+    height,
+    src
 }) => {
 
     const [isDrawing,setIsDrawing] = useState(false)
     
+    useEffect(() => {
+        const ctx = canvasRef.current.getContext('2d');
+        const image = new Image();
+        
+        
+        
+        ctx.globalAlpha = 1;
+        
+        ctx.filter = "sepia(0.8)"
+    
+      }, []);
 
     const {
         setCanvasRef,
         onCanvasMouseDown,
-        clearCanvas         
+        clearCanvas  ,   
+        canvasRef    
     } = useOnDraw(onDraw);
+    
 
     function onDraw(ctx, point, prevPoint) {
         drawLine(prevPoint, point, ctx, '#000000', 5);
@@ -40,11 +54,18 @@ const Canvas = ({
         ctx.beginPath();
         ctx.arc(start.x, start.y, 2, 0, 2 * Math.PI);
         ctx.fill();
+        
 
     }
 
     
 
+   console.log()
+
+// function adjustments(ctx){
+//     console.log(ctx)
+//     ctx.filter =`brightness(5%) )`
+// }
     return(<> 
     <Box sx={{pointerEvents:isDrawing?"auto":"none"}}>
         <canvas
@@ -58,6 +79,8 @@ const Canvas = ({
     <Box sx={{position:"absolute"}}>
     <Button onClick={()=>setIsDrawing(!isDrawing)} >draw</Button>
     <Button onClick={()=>clearCanvas(width,height)} >clear</Button>
+    
+    <Button  >Canvas</Button>
     </Box>
     </>
     
@@ -72,5 +95,6 @@ export default Canvas;
 const canvasStyle = {
     border: "1px solid black",
     background:"transparent",
+   
      
 }
