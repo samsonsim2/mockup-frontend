@@ -28,6 +28,7 @@ const AppProvider = ({ children }) => {
     "/images/placeholder/man.png",
     "/images/placeholder/group.png",
     "/images/placeholder/product1.png",
+    "/images/placeholder/product2.png",
   ]
  
   
@@ -56,12 +57,12 @@ const AppProvider = ({ children }) => {
   const [isDrawing,setIsDrawing] = useState(false)
   const [locationSticker,setLocationSticker]=useState(false)
   const [addYoursSticker,setAddYoursSticker]=useState(false)
-
+  const [imagesArray,setImagesArray] = useState(stockImages)
+const [testArray,setTestArray] = useState([])
   const[cropReset,setCropReset]=useState(true)
  
 
-  const initData = 
-  {
+  const initData =   {
      
     imageUrl:stockImages[0],
     croppedImageUrl:null
@@ -122,7 +123,10 @@ const AppProvider = ({ children }) => {
        setAddYoursSticker,
        addYoursSticker,
        cropReset,
-       setCropReset
+       setCropReset,imagesArray,
+       setImagesArray,
+       testArray,
+       setTestArray
         
       }}
     >

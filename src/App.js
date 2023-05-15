@@ -25,24 +25,35 @@ const initData =
 
 
 function App() {
-  const{selectedMockup,template,setTemplate,values,setValues,mockup,setMockup}= useAppContext() 
+  const{testArray,setTestArray,selectedMockup,template,setTemplate,values,setValues,mockup,setMockup,imagesArray,setImagesArray}= useAppContext() 
 
-  
+
  
 
 // Retrieve selected mockup from database
 
   useEffect(()=>{
-    console.log("userffect triggered")
+    
     async function getMockup(){      
       const res = await axios.post(`${BACKEND_URL}/mockup/edit`,{                       
           mockupId:selectedMockup}).then((res)=>{
               setMockup(res.data)
-              setValues({...values,brandName:res.data.userName})
-              console.log(res.data)          
+              setValues({...values,brandName:res.data.userName,mockupId:res.data.id})
+              const assets = axios.post(`${BACKEND_URL}/mockup/getAsset`,{                       
+                mockupId:res.data.id}) .then((assets)=>{
+                  console.log(assets)
+                  setTestArray(assets.data)
+                   
+                })
+              
+              // setImagesArray({...imagesArray,assets})
+              
+                
          })
         }
         getMockup()
+
+        
   },[selectedMockup]  )
 
 

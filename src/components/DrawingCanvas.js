@@ -69,6 +69,7 @@ const Canvas = ({
         onMouseDown={onCanvasMouseDown}
         style={canvasStyle}
         ref={setCanvasRef}
+        
     />
     </Box>
     <Box sx={{position:"absolute",}}>

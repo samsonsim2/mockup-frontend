@@ -1,6 +1,11 @@
-import { Box, Button, Slider, Stack, Switch, TextField, Typography } from '@mui/material'
+import { Box, Button, Input, Slider, Stack, Switch, TextField, Typography } from '@mui/material'
 import { useAppContext } from '../context/appContext'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import axios from "axios";
+import { BACKEND_URL } from '../constants';
+import { storage } from '../firebase';
+import { generateImageName } from './utils';
+import { uploadBytes, getDownloadURL, ref as sRef } from "firebase/storage";
  
 //stockImages 
 
@@ -14,23 +19,178 @@ import { useState } from 'react'
   }
 
 const MockupDetails = () => {
-    const{cropReset,setCropReset,setAddYoursSticker,addYoursSticker, locationSticker,setLocationSticker,resetImage,stock,setStock,setSelectedStock,selectedStock,stockImages,selectedMockup,template,setTemplate,values,setValues,setFilterValues,filterValues}= useAppContext() 
-     
+    const{
+      cropReset,
+      setCropReset,
+      setAddYoursSticker,
+      addYoursSticker, 
+      locationSticker,
+      setLocationSticker,     
+      stock,
+      setStock,    
+      stockImages,     
+      template,
+      setTemplate,
+      values,
+      setValues,
+      setFilterValues,
+      filterValues,
+    imagesArray,
+    testArray,
+  setImagesArray}= useAppContext() 
+
+    const [fileInput,setFileInput] = useState("")
+   
  
 
 
 // START OF FUNCTIONS ---------------------
-
+useEffect(()=>{
+    
+ 
+},[]  )
 // Handle form changes
   const handleChange=(e)=>{
     console.log(e.target.value)
    setValues({...values,[e.target.name]:e.target.value})
   }
 
-  const reset =(e)=>{
+//   const onUpload=async( e)=>{
+//     e.preventDefault()
+
+//     const fileName = generateImageName(fileInput.name);
+
+//     const storageRef = sRef(storage, `images/${fileName}`);
+
+//     //Reset the preview link
+//     uploadBytes(storageRef, fileInput)
+//     .then((snapshot) => {
+//       return getDownloadURL(snapshot.ref);
+//     })
+//     .then((url) => {
+//        console.log(url)
+//        const res=  axios.post(`${BACKEND_URL}/mockup/create`, {...values,createdBy:userId,imageUrl:url} ).then((res)=>{
+           
+//         console.log(res.data)
+       
+       
+//     })
+//     })
+  
+//     console.log({...values,createdBy:userId} )
+  
+// }
+
+const save= async (event) => {
+  event.preventDefault()
+  const uploadFile =()=>{
+    const fileName = generateImageName(fileInput?.name);
     
+    
+    const storageRef = sRef(storage, `images/${fileName}`);
+  
+    //Reset the preview link
+    uploadBytes(storageRef, fileInput)
+    .then((snapshot) => {
+      return getDownloadURL(snapshot.ref);
+    })
+    .then((url) => {
+       
+      setFileInput("")
+      async function createAsset(){      
+        const res = await axios.post(`${BACKEND_URL}/mockup/createAsset`,{                       
+            mockupId:values.mockupId,imageUrl:url}).then((res)=>{   
+                       
+            console.log(res.data)          
+           })
+          }
+     createAsset()
+   
+    }) 
+  }
+
+  uploadFile()
+} 
+
+const handleImageInput =   async (event) => {
+  event.preventDefault()
+  console.log("handle image input")
+  console.log(event.target.files[0].name)
+   setFileInput(event.target.files[0])
+   
+  // console.log(e.target.value)
+  const tempUrl = URL.createObjectURL(event.target.files[0])
+  // console.log(tempUrl)
+  setImagesArray([...imagesArray,tempUrl])
+
+  // const uploadFile =()=>{
+  //   const fileName = generateImageName(fileInput?.name);
+    
+    
+  //   const storageRef = sRef(storage, `images/${fileName}`);
+  
+  //   //Reset the preview link
+  //   uploadBytes(storageRef, fileInput)
+  //   .then((snapshot) => {
+  //     return getDownloadURL(snapshot.ref);
+  //   })
+  //   .then((url) => {
+       
+  //     setFileInput("")
+  //     async function createAsset(){      
+  //       const res = await axios.post(`${BACKEND_URL}/mockup/createAsset`,{                       
+  //           mockupId:values.mockupId,imageUrl:url}).then((res)=>{   
+                       
+  //           console.log(res.data)          
+  //          })
+  //         }
+  //    createAsset()
+   
+  //   }) 
+  // }
+
+  // uploadFile()
+ 
+
+  
+};
+
+useEffect(()=>{
+  const uploadFile =()=>{
+    const fileName = generateImageName(fileInput?.name);
+    
+    
+    const storageRef = sRef(storage, `images/${fileName}`);
+  
+    //Reset the preview link
+    uploadBytes(storageRef, fileInput)
+    .then((snapshot) => {
+      return getDownloadURL(snapshot.ref);
+    })
+    .then((url) => {
+       
+      setFileInput("")
+      async function createAsset(){      
+        const res = await axios.post(`${BACKEND_URL}/mockup/createAsset`,{                       
+            mockupId:values.mockupId,imageUrl:url}).then((res)=>{   
+                       
+            console.log(res.data)          
+           })
+          }
+     createAsset()
+   
+    }) 
+  }
+
+  if(fileInput){
+    uploadFile()
 
   }
+
+  
+
+},[fileInput])
+
 // END OF FUNCTIONS ---------------------
   return (
 <Box  width="100%"   backgroundColor="red"  padding="20px" >
@@ -45,22 +205,51 @@ const MockupDetails = () => {
 {/*Stock Image*/}
 
 <Stack direction="row" spacing={1}>
-{stockImages.map((image,index)=>{
+{imagesArray.map((image,index)=>{
     return <Box key={index} component="img"  src={image} sx={{width:"40px", height:"40px",objectFit:"cover",borderRadius:"10px",cursor:"pointer"}}
     onClick={ ()=>{
+      console.log(stockImages[index])
     
    
-     setStock({...stock,imageUrl:stockImages[index],croppedImageUrl:null})
+     setStock({imageUrl:imagesArray[index],croppedImageUrl:null})
      setCropReset(!cropReset)
+     console.log(image)
     
     }} >
         
     </Box>
+   
+
+})}
+
+{testArray.map((image,index)=>{
+    return <Box key={index} component="img"  src={image.imageUrl} sx={{width:"40px", height:"40px",objectFit:"cover",borderRadius:"10px",cursor:"pointer"}}
+    onClick={ ()=>{     
+   
+     setStock({imageUrl:image.imageUrl,croppedImageUrl:null})
+     setCropReset(!cropReset)
+     console.log(image)
+    
+    }}
+     
+     
+     >
+        
+    </Box>
+   
 
 })}
  </Stack>
- 
- 
+
+ <Input 
+                type="file"
+                id="file-upload"
+                accept="image/jpg, image/png"
+                onChange={handleImageInput}     
+                
+                >               
+
+  </Input>
     
 {/*Sliders*/}
  <Typography>Brightness</Typography>
@@ -98,7 +287,7 @@ const MockupDetails = () => {
 <Typography>Add Yours Sticker</Typography>
 </Stack>
 {addYoursSticker?<TextField name="addYours" value={values.addYours} onChange={handleChange}></TextField>:null}
-
+<Button onClick={save}>Save</Button>
   
 
 </Box>

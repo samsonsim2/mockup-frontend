@@ -87,8 +87,8 @@ const ImageCropDialog = ({id,imageUrl,zoomInit,cropInit,aspectInit,onCancel,setC
         <Box  position="fixed" bottom= "0px"  left="0px" display="flex" justifyContent="center" width="100%"  height="80px" pointerEvents="auto"
             sx={{backgroundColor:"black",zIndex:"1000"}}
  >
-        <Box margin="auto" width="80%"   display="flex" flexDirection="column" sx={{border:2,borderColor:"black"}}>
-             <Slider  min={1} max={3} step={0.1}  value={zoom} onChange={(e)=>{onZoomChange(e.target.value)}} />
+        <Box margin="auto" width="80%"   display="flex" flexDirection="column"  >
+             <Slider sx={{color:"white"}} min={1} max={3} step={0.1}  value={zoom} onChange={(e)=>{onZoomChange(e.target.value)}} />
              
         <Stack direction="row"  spacing="20px" display="flex" justifyContent="center" >
             <Button variant="contained" onClick={onCancel}>cancel</Button>

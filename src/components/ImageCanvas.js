@@ -6,7 +6,7 @@ import { useAppContext } from '../context/appContext';
  
 function ImageCanvas() {
 
-  const {onCancel,
+  const {imagesArray,onCancel,
     setCroppedImageFor,
     resetImage,stock,setStock,selectedStock,setSelectedStock,filterValues,stockImage,stockImages} = useAppContext()
 
@@ -31,15 +31,17 @@ function ImageCanvas() {
         let y = (500 / 2) - (newHeight / 2);
         
         ctx.drawImage(image, x, y, newWidth, newHeight);
+        
     };
+    image.crossOrigin = "Anonymous";
     
     
     ctx.globalAlpha = 1;
     
     ctx.filter = `brightness(${filterValues.brightness}) saturate(${filterValues.saturation}) contrast(${filterValues.contrast})`
-    console.log(filterValues)
+   
 
-  }, [stock.croppedImageUrl,filterValues,stock]);
+  }, [stock.croppedImageUrl,filterValues,stock,imagesArray]);
 
 
    

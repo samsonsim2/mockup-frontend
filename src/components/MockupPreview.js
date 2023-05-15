@@ -6,6 +6,8 @@ import Draggable from 'react-draggable'
 import { useAppContext } from '../context/appContext'
 import html2canvas from 'html2canvas'
 import {useOnDraw} from './Hooks';
+import axios from 'axios'
+import { BACKEND_URL } from '../constants'
  
 const MockupPreview = () => {
 const{addYoursSticker, setSelectedStock,stock, locationSticker,setIsDrawing,isDrawing,selectedMockup,template,setTemplate,values,setValues,mockup,setMockup}= useAppContext() 
@@ -18,6 +20,8 @@ const {
       clearCanvas  ,   
       canvasRef    
   } = useOnDraw();
+
+  
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext('2d');
@@ -75,8 +79,11 @@ function drawLine(
 
 // Download image 
   const downloadImage = () => {
+    
     console.log("test")
-    html2canvas(divRef.current,{backgroundColor:null})
+    html2canvas(divRef.current,{useCORS: true,
+      allowTaint: true,backgroundColor:null})
+    
       .then(canvas => {
         const link = document.createElement('a');
         link.download = 'my-div-image.png';
@@ -147,7 +154,7 @@ function drawLine(
 
 
     {/*DP ZINDEX= 110 */}
-    <Box sx={{zIndex:"110",position:'absolute' ,top:"110px",left:"20px" }}>
+    <Box sx={{zIndex:"2000",position:'absolute' ,top:"110px",left:"20px" }}>
       <img style={{objectFit:"cover", width:"30px",height:"30px",borderRadius:"50%", }}src={mockup?mockup?.imageUrl:`images/car1.png`}></img>
     </Box>    
 

@@ -54,7 +54,7 @@ const MockupForm = () => {
     const onSubmit=async( e)=>{
         e.preventDefault()
 
-        const fileName = generateImageName(fileInput.name);
+        const fileName = generateImageName(fileInput?.name);
     
         const storageRef = sRef(storage, `images/${fileName}`);
     
@@ -95,10 +95,10 @@ const MockupForm = () => {
         setProfilePic(URL.createObjectURL(event.target.files[0]));
       };
 
-    const handleUpload = (e) => {
-      e.preventDefault()
+    // const handleUpload = (e) => {
+    //   e.preventDefault()
       
-      }
+    //   }
 
    
    
