@@ -82,34 +82,8 @@ useEffect(()=>{
 // }
 
 const save= async (event) => {
-  event.preventDefault()
-  const uploadFile =()=>{
-    const fileName = generateImageName(fileInput?.name);
-    
-    
-    const storageRef = sRef(storage, `images/${fileName}`);
-  
-    //Reset the preview link
-    uploadBytes(storageRef, fileInput)
-    .then((snapshot) => {
-      return getDownloadURL(snapshot.ref);
-    })
-    .then((url) => {
-       
-      setFileInput("")
-      async function createAsset(){      
-        const res = await axios.post(`${BACKEND_URL}/mockup/createAsset`,{                       
-            mockupId:values.mockupId,imageUrl:url}).then((res)=>{   
-                       
-            console.log(res.data)          
-           })
-          }
-     createAsset()
    
-    }) 
-  }
-
-  uploadFile()
+ 
 } 
 
 const handleImageInput =   async (event) => {

@@ -6,14 +6,15 @@ import { uploadBytes, getDownloadURL, ref as sRef } from "firebase/storage";
 import { styled } from '@mui/material/styles';
 import {useFormik} from "formik"
 import {yupResolver} from '@hookform/resolvers/yup'
+ 
 import * as yup from 'yup' 
 import AddIcon from '@mui/icons-material/Add';
-import { useAppContext } from '../context/appContext';
+import { useAppContext } from '../../context/appContext';
 import axios from "axios";
-import { BACKEND_URL } from '../constants';
-import { storage } from '../firebase';
-import { generateImageName } from './utils';
- 
+import { BACKEND_URL } from '../../constants';
+import { storage } from '../../firebase';
+import { generateImageName } from '../utils';
+import CloseIcon from '@mui/icons-material/Close';
 const SmallAvatar = styled(Avatar)(({ theme }) => ({
     width: 22,
     height: 22,
@@ -30,32 +31,34 @@ const style = {
     border: '2px solid #000',
     boxShadow: 24,
     borderRadius:'20px',
-    p: 4,
+    p: 2,
     
      
   };
   
-const MockupForm = () => {
-    const { userId } = useAppContext();
-    useEffect(()=>{
-      console.log(userId)
-    },[])
-    const [open, setOpen] = React.useState(true);
+function MockupForm  (props) {
+
+  const {openMockupForm,setOpenMockupForm} = props 
+    const { currentUserId } = useAppContext();
+
+
+  
+    
+ 
     const [ fileInput,setFileInput] = useState("")
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+     
 
     const [profilePic,setProfilePic] = useState()
 
     
     const schema = yup.object().shape({
-        username:yup.string().min(4).max(30).required("Please enter a valid user name (max30 chars)")
+        userName:yup.string().min(4).max(30).required("Please enter a valid user name (max30 chars)")
     })
     const onSubmit=async( e)=>{
         e.preventDefault()
 
-        const fileName = generateImageName(fileInput?.name);
-    
+        // Preview Image 
+        const fileName = generateImageName(fileInput?.name);    
         const storageRef = sRef(storage, `images/${fileName}`);
     
         //Reset the preview link
@@ -65,15 +68,12 @@ const MockupForm = () => {
         })
         .then((url) => {
            console.log(url)
-           const res=  axios.post(`${BACKEND_URL}/mockup/create`, {...values,createdBy:userId,imageUrl:url} ).then((res)=>{
-               
-            console.log(res.data)
-           
-           
-        })
+           const res=  axios.post(`${BACKEND_URL}/mockup/create`, {...values,createdBy:currentUserId,imageUrl:url} ).then((res)=>{  
+           setFileInput("")
+          })
         })
       
-        console.log({...values,createdBy:userId} )
+   
       
     }
 
@@ -83,7 +83,6 @@ const MockupForm = () => {
             imageUrl:"testing123",
              
         },
-
         validationSchema:schema,
         onSubmit
     })
@@ -95,19 +94,13 @@ const MockupForm = () => {
         setProfilePic(URL.createObjectURL(event.target.files[0]));
       };
 
-    // const handleUpload = (e) => {
-    //   e.preventDefault()
-      
-    //   }
-
-   
    
 
      
   return (<>
      
  <Modal
-        open={open}
+        open={openMockupForm}
         
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
@@ -115,6 +108,8 @@ const MockupForm = () => {
       >
 
         <Box  display="flex" flexDirection="column"   sx={style}>
+        < CloseIcon sx={{alignSelf:"flex-end",cursor:"pointer"}} onClick={()=>setOpenMockupForm(false)}></CloseIcon>
+         
         
         <Typography variant="h5" textAlign="center" mb="20px">Create Mockup</Typography>
 
@@ -147,7 +142,6 @@ const MockupForm = () => {
         <form style={{display:"flex", flexDirection:"column",justifyContent:"center"}} onSubmit={onSubmit} >
             <TextField  
             sx={{width:'100%',mb:"20px"}}
-
             error={errors.userName?true:false}
             value={values.userName}
             onChange={handleChange}
@@ -158,7 +152,7 @@ const MockupForm = () => {
             helperText={errors.userName?errors.userName:null} />
 
             <Button  sx={{margin:"auto", width:"100%"}} variant="contained" type="submit">Create</Button>
-            </form>
+        </form>
          
             
         </Box>

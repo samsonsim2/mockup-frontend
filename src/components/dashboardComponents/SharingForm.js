@@ -6,15 +6,11 @@ import {useFormik} from "formik"
 import {yupResolver} from '@hookform/resolvers/yup'
 import * as yup from 'yup' 
 import AddIcon from '@mui/icons-material/Add';
-import { useAppContext } from '../context/appContext';
+import { useAppContext } from '../../context/appContext';
 import axios from "axios";
-import { BACKEND_URL } from '../constants';
+import { BACKEND_URL } from '../../constants';
+import CloseIcon from '@mui/icons-material/Close';
  
-// const SmallAvatar = styled(Avatar)(({ theme }) => ({
-//     width: 22,
-//     height: 22,
-//     border: `2px solid ${theme.palette.background.paper}`,
-//   }));
   
 const style = {
     position: 'absolute',
@@ -26,45 +22,30 @@ const style = {
     border: '2px solid #000',
     boxShadow: 24,
     borderRadius:'20px',
-    p: 4,
+    p: 2,
     
      
   };
   
-const SharingForm = ({mockupId}) => {
-  console.log(mockupId)
-    const { userId } = useAppContext();
-    useEffect(()=>{
-      console.log(userId)
-    },[])
-    const [open, setOpen] = React.useState(true);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-
-   
+const SharingForm = ({openSharingForm,setOpenSharingForm}) => {
+ 
+    const { setSelectedMockup,selectedMockup,userId } = useAppContext();   
     
     const schema = yup.object().shape({
         email:yup.string().email("Please enter a valid email").required("Email Required")
     })
     const onSubmit=async( e)=>{
-        e.preventDefault()
-        console.log({...values,mockupId:mockupId})
-      
-        console.log({...values,createdBy:userId} )
-        const res= await axios.post(`${BACKEND_URL}/mockup/share`, {...values,mockupId:mockupId} ).then((res)=>{
-               
-              console.log(res.data)
-             
-             
+        e.preventDefault()        
+        const res= await axios.post(`${BACKEND_URL}/mockup/share`, {...values,mockupId:selectedMockup} ).then((res)=>{
+                         setSelectedMockup(null)  
+            setOpenSharingForm(false)
           })
     }
 
     const {values,errors,touched,handleChange,handleBlur,handleSubmit} = useFormik({
         initialValues:{
             email:"",
-             
         },
-
         validationSchema:schema,
         onSubmit
     })
@@ -72,15 +53,11 @@ const SharingForm = ({mockupId}) => {
     console.log(errors)
 
     
-
-   
-   
-
      
   return (<>
      
  <Modal
-        open={open}
+        open={openSharingForm}
         
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
@@ -88,6 +65,9 @@ const SharingForm = ({mockupId}) => {
       >
 
         <Box  display="flex" flexDirection="column"   sx={style}>
+        <CloseIcon sx={{alignSelf:"flex-end",cursor:"pointer"}} onClick={()=>{ 
+            setSelectedMockup(null)  
+            setOpenSharingForm(false)}}></CloseIcon>
         
         <Typography variant="h5" textAlign="center" mb="20px">Share Mockup</Typography>
 
@@ -96,7 +76,6 @@ const SharingForm = ({mockupId}) => {
         <form style={{display:"flex", flexDirection:"column",justifyContent:"center"}} onSubmit={onSubmit} >
             <TextField  
             sx={{width:'100%',mb:"20px"}}
-
             error={errors.email?true:false}
             value={values.email}
             onChange={handleChange}
@@ -106,19 +85,13 @@ const SharingForm = ({mockupId}) => {
             variant="outlined"
             helperText={errors.email?errors.email:null} />
 
-            <Button  sx={{margin:"auto", width:"100%"}} variant="contained" type="submit">Create</Button>
+            <Button  sx={{margin:"auto", width:"100%"}} variant="contained" type="submit"
+           >Share</Button>
             </form>
          
             
         </Box>
       </Modal>
-    
-
-
-  
-    
-
-
     </>
   )
 }

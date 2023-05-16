@@ -1,11 +1,11 @@
 import React from 'react'
 
-const Error = () => {
+const MockupCard = () => {
   return (
     <div>
-      errordsadadadas
+      
     </div>
   )
 }
 
-export default Error
+export default MockupCard

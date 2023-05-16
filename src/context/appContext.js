@@ -45,12 +45,15 @@ const AppProvider = ({ children }) => {
   function setCanvasRef(ref) {
     canvasRef.current = ref;
 }
+//AUTHENTICATION INFO
+const [currentUserId, setCurrentUserId] = useState("");
+const [open, setOpen] = React.useState(false);
+//MOCKUP DATA
+const[userMockups,setUserMockups]=useState([])
+const [selectedMockup,setSelectedMockup]=useState(null)
+const [mockup,setMockup] = useState() 
 
- 
-  const [userId, setUserId] = useState("");
-  const[userMockups,setUserMockups]=useState([])
-  const [selectedMockup,setSelectedMockup]=useState()
-  const [mockup,setMockup] = useState() 
+
   const [template,setTemplate]=useState("images/feed.png")
   const [values,setValues] = useState(initDetails) 
   const [filterValues,setFilterValues] = useState(filters)
@@ -93,11 +96,19 @@ const [testArray,setTestArray] = useState([])
   return (
     <AppContext.Provider
       value={{
+        //Navbar
+        open,
+        setOpen,
+
+       //Authentication Info
+       currentUserId,
+       setCurrentUserId,
+       
+       
         onCancel,
         setCroppedImageFor,
         resetImage,
-       userId,
-       setUserId,
+       
        userMockups,
        setUserMockups,
        selectedMockup,
