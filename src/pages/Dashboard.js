@@ -118,12 +118,16 @@ import MockupForm from '../components/dashboardComponents/CreateMockupForm';
 import { useMobileView } from '../components/utils';
 import DeleteModal from '../components/dashboardComponents/DeleteModal';
 import SharingForm from '../components/dashboardComponents/SharingForm';
+import { useNavigate } from 'react-router';
+import ShareIcon from '@mui/icons-material/Share';
+import WorkIcon from '@mui/icons-material/Work';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
  
  
 const menu = [
-  ["My mockups",  <ChevronLeftIcon  />],
-  ["Shared mockups", <ChevronLeftIcon  />],
-  ["Profile",<ChevronLeftIcon/>],
+  ["My mockups",  <WorkIcon  />],
+  ["Shared mockups",<ShareIcon/>],
+  ["Profile",< AccountCircleIcon/>],
    
  
 ];
@@ -177,8 +181,10 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function Dashboard() {
 
+  const navigate = useNavigate();
+
  const { user,isAuthenticated,getAccessTokenSilently } = useAuth0();    
- const {setUserMockups,setCurrentUserId,currentUserId,userMockups,selectedMockup,setSelectedMockup}=useAppContext()
+ const {setProfilePic,setProfileInput,setUserMockups,setCurrentUserId,currentUserId,userMockups,selectedMockup,setSelectedMockup}=useAppContext()
 
   //Check Mobile view
  const isMobile = useMobileView();
@@ -209,12 +215,13 @@ export default function Dashboard() {
                 headers: {
                   Authorization: `Bearer ${token}`,
                 }},).then((res)=>{
-                    console.log(res.data)
+                     
                     setCurrentUserId(res.data.id)                       
                 })              
      }  
      
      getToken()  
+     
     }          
 },[isAuthenticated,getAccessTokenSilently])
 
@@ -272,6 +279,8 @@ useEffect(()=>{
       </AppBar>
       <Drawer
         sx={{
+          display:"flex",
+          justifyContent:"space-between",
           width: drawerWidth,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
@@ -302,18 +311,8 @@ useEffect(()=>{
           ))}
         </List>
         <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
+        <Box sx={{height:"100%"  ,display:"flex", alignItems:"flex-end", p :"10px"}}> <Typography  fontWeight="bold"> Welcome  {user?.given_name} {user?.family_name} </Typography></Box>
+        
       </Drawer>
       <Main sx={{height:"100vh",display:'flex',flexDirection:"column", backgroundColor:"#F5F5F5"}}open={open}>
         {/* <DrawerHeader /> */}
@@ -323,7 +322,7 @@ useEffect(()=>{
         <AddIcon />
       </Fab>: <Button sx={{alignSelf:"flex-end",mt:4  }} variant="contained" 
           onClick={()=>{setOpenMockupForm(!openMockupForm)
-          }}>Create Mockup</Button>}
+          }}><AddIcon sx={{marginRight:"5px"}}/>Create Mockup</Button>}
          
         </Box>
 
@@ -331,8 +330,8 @@ useEffect(()=>{
         
         <Box display="grid"  sx={{ columnGap:"10px",
         rowGap:"20px",gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))',}}>
-        {userMockups.map((mockup)=>{
-        return   <Card sx={{ maxWidth: 345 }}>
+        {userMockups.map((mockup,index)=>{
+        return   <Card key={index} sx={{ maxWidth: 345 }}>
         <CardMedia
           sx={{ height: 140 }}
           image={mockup?.imageUrl ? mockup.imageUrl : mockup?.Mockup?.imageUrl}        
@@ -362,7 +361,11 @@ useEffect(()=>{
             }}><FolderSharedIcon /></IconButton> : null }
 
           {/*EDIT BUTTON */}  
-            <IconButton><EditIcon/></IconButton>      
+            <IconButton onClick={()=>{
+              setSelectedMockup(mockup.id)
+              
+              navigate('/mockup')
+            }}><EditIcon/></IconButton>      
 
           {/*DELETE BUTTON (only allow deletion for user's own mockup) */}  
           {dashboardView==="My mockups" ?

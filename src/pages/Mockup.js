@@ -14,7 +14,7 @@ import { BACKEND_URL } from '../constants';
 import ImageCanvas from '../components/ImageCanvas';
 import MockupDetails from '../components/MockupDetails';
 import MockupPreview from '../components/MockupPreview';
- 
+ import NavBar from '../components/sharedComponents/Navbar'
  
  // initial Image 
 const initData = 
@@ -24,8 +24,12 @@ const initData =
     croppedImageUrl:null
   } 
 
+ 
+
 
 function Mockup() {
+
+  
   const{testArray,setTestArray,selectedMockup,template,setTemplate,values,setValues,mockup,setMockup,imagesArray,setImagesArray}= useAppContext() 
 
 
@@ -36,10 +40,15 @@ function Mockup() {
   useEffect(()=>{
     
     async function getMockup(){      
-      const res = await axios.post(`${BACKEND_URL}/mockup/edit`,{                       
-          mockupId:selectedMockup}).then((res)=>{
+      const res = await axios.get(`${BACKEND_URL}/mockup/edit/${selectedMockup}` ).then((res)=>{
               setMockup(res.data)
-              setValues({...values,brandName:res.data.userName,mockupId:res.data.id})
+              setValues({...values,
+                cta:res.data.Feeds[0].cta,
+                caption:res.data.Feeds[0].caption,
+                brandName:res.data.userName,
+                mockupId:res.data.id,
+                profileUrl:res.data.imageUrl})
+              console.log(res.data)
               const assets = axios.post(`${BACKEND_URL}/mockup/getAsset`,{                       
                 mockupId:res.data.id}) .then((assets)=>{
                   console.log(assets)
@@ -59,10 +68,11 @@ function Mockup() {
 
 
   return (<>
+      <NavBar/>
   
-  <Box width="100vw" height="100vh" overflow="auto"   display="flex" >
-    
-    <Box width="80%"   height="100%" margin="auto" display="flex" flexDirection="row"  justifyContent="space-between" sx={{border:2 ,borderColor:"black"}} >
+  <Box width="100%" height="100vh"   display="flex" sx={{  background: `#E7EBF0`}} >
+
+    <Box width="80%"   borderRadius="20px" height="fit-content" margin="20px auto" display="flex" flexDirection="row"  justifyContent="space-between"   boxShadow= '1'   >
    
     <MockupDetails/>
     <MockupPreview/>

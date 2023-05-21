@@ -24,7 +24,7 @@ export function useOnDraw(onDraw) {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
 
-        ctx.globalAlpha = 1; // Set alpha value to 0.5 for 50% transparency
+        ctx.globalAlpha = 0.5; // Set alpha value to 0.5 for 50% transparency
 
       }, []);
 

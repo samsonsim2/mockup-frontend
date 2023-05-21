@@ -16,7 +16,7 @@ const AppProvider = ({ children }) => {
   // Form data 
   const initDetails={
     cta:"Learn more",
-    message:"lorem ipsum dolor",
+    caption:"lorem ipsum dolor",
     brandName:"",
     storiesCta:"Learn moree",
     location:"Location",
@@ -54,6 +54,9 @@ const [selectedMockup,setSelectedMockup]=useState(null)
 const [mockup,setMockup] = useState() 
 
 
+
+const [ profileInput,setProfileInput]= useState("")
+    const [profilePic,setProfilePic] = useState()
   const [template,setTemplate]=useState("images/feed.png")
   const [values,setValues] = useState(initDetails) 
   const [filterValues,setFilterValues] = useState(filters)
@@ -73,7 +76,8 @@ const [testArray,setTestArray] = useState([])
 
   const [stock,setStock] =useState(initData)
   const [selectedStock,setSelectedStock] = useState(null) 
-
+  const [safeZone,setSafeZone]=useState(false)
+ 
   const onCancel =()=>{
     setSelectedStock(null)
         
@@ -103,12 +107,19 @@ const [testArray,setTestArray] = useState([])
        //Authentication Info
        currentUserId,
        setCurrentUserId,
+
+       //MOCKUPDETAILS
+       profileInput,
+       setProfileInput,
+       profilePic,
+       setProfilePic,
        
        
         onCancel,
         setCroppedImageFor,
         resetImage,
-       
+       safeZone,
+       setSafeZone,
        userMockups,
        setUserMockups,
        selectedMockup,

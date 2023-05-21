@@ -15,6 +15,7 @@ import { BACKEND_URL } from '../../constants';
 import { storage } from '../../firebase';
 import { generateImageName } from '../utils';
 import CloseIcon from '@mui/icons-material/Close';
+import { useNavigate } from 'react-router';
 const SmallAvatar = styled(Avatar)(({ theme }) => ({
     width: 22,
     height: 22,
@@ -39,7 +40,9 @@ const style = {
 function MockupForm  (props) {
 
   const {openMockupForm,setOpenMockupForm} = props 
-    const { currentUserId } = useAppContext();
+
+  const navigate = useNavigate()
+    const { currentUserId,setSelectedMockup } = useAppContext();
 
 
   
@@ -70,6 +73,8 @@ function MockupForm  (props) {
            console.log(url)
            const res=  axios.post(`${BACKEND_URL}/mockup/create`, {...values,createdBy:currentUserId,imageUrl:url} ).then((res)=>{  
            setFileInput("")
+           setSelectedMockup(res.data.id)
+           navigate('/mockup')
           })
         })
       
@@ -92,6 +97,7 @@ function MockupForm  (props) {
     const handleProfilePicInput = (event) => {
         setFileInput(event.target.files[0])
         setProfilePic(URL.createObjectURL(event.target.files[0]));
+      
       };
 
    
@@ -108,7 +114,12 @@ function MockupForm  (props) {
       >
 
         <Box  display="flex" flexDirection="column"   sx={style}>
-        < CloseIcon sx={{alignSelf:"flex-end",cursor:"pointer"}} onClick={()=>setOpenMockupForm(false)}></CloseIcon>
+        < CloseIcon sx={{alignSelf:"flex-end",cursor:"pointer"}} onClick={()=>{
+          setOpenMockupForm(false)
+          setFileInput("")
+          setProfilePic("")
+          values.userName = ""}
+          }></CloseIcon>
          
         
         <Typography variant="h5" textAlign="center" mb="20px">Create Mockup</Typography>
@@ -151,7 +162,7 @@ function MockupForm  (props) {
             variant="outlined"
             helperText={errors.userName?errors.userName:null} />
 
-            <Button  sx={{margin:"auto", width:"100%"}} variant="contained" type="submit">Create</Button>
+            <Button  sx={{margin:"auto", width:"100%"}} variant="contained" type="submit"  >Create</Button>
         </form>
          
             

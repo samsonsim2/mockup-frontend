@@ -2,26 +2,20 @@ import { Box, Button, alpha } from '@mui/material';
 import {useOnDraw} from './Hooks';
 import { useEffect, useState } from 'react';
 import { useAppContext } from '../context/appContext';
+import zIndex from '@mui/material/styles/zIndex';
     
 const Canvas = ({
     width,
     height,
-    src
+    src,
+    color
 }) => {
+
+    console.log(color)
 
     // const [isDrawing,setIsDrawing] = useState(false)
     const{isDrawing,setIsDrawing} = useAppContext()
-    useEffect(() => {
-        const ctx = canvasRef.current.getContext('2d');
-        const image = new Image();
-        
-        
-        
-        ctx.globalAlpha = 1;
-        
-        ctx.filter = "sepia(0.8)"
-    
-      }, []);
+
 
     const {
         setCanvasRef,
@@ -32,7 +26,7 @@ const Canvas = ({
     
 
     function onDraw(ctx, point, prevPoint) {
-        drawLine(prevPoint, point, ctx, '#000000', 5);
+        drawLine(prevPoint, point, ctx, `#${color}`, 5);
     }
 
     function drawLine(
@@ -55,7 +49,7 @@ const Canvas = ({
         ctx.beginPath();
         ctx.arc(start.x, start.y, 2, 0, 2 * Math.PI);
         ctx.fill();
-        
+        ctx.filter = `saturate(1)`
 
     }
 
@@ -88,11 +82,12 @@ const Canvas = ({
 export default Canvas;
 
 const canvasStyle = {
-    border: "1px solid black",
+    
     position:"absolute",
     top:0,
     left:0,
     background:"transparent",
+ 
    
      
 }
