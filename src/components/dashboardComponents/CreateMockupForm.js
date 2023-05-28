@@ -70,11 +70,23 @@ function MockupForm  (props) {
           return getDownloadURL(snapshot.ref);
         })
         .then((url) => {
-           console.log(url)
+           
            const res=  axios.post(`${BACKEND_URL}/mockup/create`, {...values,createdBy:currentUserId,imageUrl:url} ).then((res)=>{  
-           setFileInput("")
+           // Clear profile image upload preview 
+            setFileInput("")
+          // set selected mockup ID
            setSelectedMockup(res.data.id)
+           // Navigate to mockup page 
            navigate('/mockup')
+      
+           //Create Feed 
+           axios.post(`${BACKEND_URL}/mockup/feed`,{mockupId:res.data.id} );
+           //Create Story
+           axios.post(`${BACKEND_URL}/mockup/story`,{mockupId:res.data.id} );
+           //Create Feed
+           axios.post(`${BACKEND_URL}/mockup/filter`,{mockupId:res.data.id} )
+           //Create Reel
+           axios.post(`${BACKEND_URL}/mockup/reel`,{mockupId:res.data.id} )
           })
         })
       
@@ -85,8 +97,7 @@ function MockupForm  (props) {
     const {values,errors,touched,handleChange,handleBlur,handleSubmit} = useFormik({
         initialValues:{
             userName:"",
-            imageUrl:"testing123",
-             
+            imageUrl:"",             
         },
         validationSchema:schema,
         onSubmit

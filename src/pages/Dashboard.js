@@ -361,9 +361,11 @@ useEffect(()=>{
             }}><FolderSharedIcon /></IconButton> : null }
 
           {/*EDIT BUTTON */}  
-            <IconButton onClick={()=>{
+            <IconButton onClick={(e)=>{
+              console.log(mockup.id)
+           
               setSelectedMockup(mockup.id)
-              
+            
               navigate('/mockup')
             }}><EditIcon/></IconButton>      
 

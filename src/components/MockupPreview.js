@@ -23,7 +23,7 @@ import { ColorPicker } from 'primereact/colorpicker';
               
  
 const MockupPreview = () => {
-const{profilePic,safeZone,addYoursSticker, setSelectedStock,stock, locationSticker,setIsDrawing,isDrawing,selectedMockup,template,setTemplate,values,setValues,mockup,setMockup}= useAppContext() 
+const{iconPic,profilePic,safeZone,addYoursSticker, setSelectedStock,stock, locationSticker,setIsDrawing,isDrawing,selectedMockup,template,setTemplate,values,setValues,mockup,setMockup}= useAppContext() 
 const [color,setColor] = useState("#000000")
 
 const divRef = useRef(null); 
@@ -44,8 +44,7 @@ const {
     
     
     ctx.globalAlpha = 1;
-    
-    ctx.filter = "sepia(0.8)"
+     
 
   }, []);
 
@@ -114,11 +113,14 @@ function drawLine(
     
     <Box display="flex" flexDirection="column" justifyContent="center" padding="40px" sx={{ minWidth:"320px" , transition:"0.2s",background: isDrawing?"#81c784":"#f5f5f5"  ,spacing:"0",borderTopRightRadius:"20px",borderBottomRightRadius:"20px"}} >
     
-   
+    {/*Title*/}
     <Box display="flex" flexDirection="column" justifyContent="center"  >
     <Typography   sx={{ mb:0, fontSize:"30px",zIndex:"1000",textAlign:"center"}}>Mockup preview </Typography>
     <Typography sx={{fontStyle:"italic", fontSize:"10px",marginBottom:"20px",zIndex:"1000",textAlign:"center"}}>{isDrawing?`*Drawing mode is on, turn off to move sticker`:null}</Typography>
     </Box>    
+
+    
+     {/*Phone*/}
     
     <Box   margin="auto" width="250px" height="500px" position="relative" sx={{display:"flex" ,justifyContent:"center" ,alignItems:"center",   mb:"20px"}}  ref={divRef}>
       
@@ -203,7 +205,7 @@ function drawLine(
     {template==="images/story.png"  ?<Box   border
     sx={{ zIndex:"95", background:"grey" , pointerEvents:"none",position:"absolute" , bottom:"4.5%" , borderRadius:"20px",paddingLeft:"10px",paddingRight:"10px" ,paddingTop:"4px",paddingBottom:"4px" ,borderColor:"red"}}
      >      
-     <Typography  sx={{color:"white",fontSize:"10px"}}>{values.cta}</Typography>
+     <Typography  sx={{color:"white",fontSize:"10px"}}>{values.storiesCta}</Typography>
     </Box>     : null }
 
     
@@ -266,7 +268,7 @@ function drawLine(
     {template==="images/reels.png"  ?<Box   border
     sx={{ zIndex:"95", pointerEvents:"none",position:"absolute" , bottom:"19.5%" ,left:"12%", borderRadius:"20px",paddingLeft:"10px",paddingRight:"10px" ,paddingTop:"4px",paddingBottom:"4px" ,borderColor:"red"}}
      >      
-     <Typography  sx={{color:"white",fontSize:"10px",fontWeight:"bold"}}>{values.cta}</Typography>
+     <Typography  sx={{color:"white",fontSize:"10px",fontWeight:"bold"}}>{values.reelsCta}</Typography>
     </Box>     : null }
 
     {/*DP1 ZINDEX= 110 */}
@@ -285,24 +287,26 @@ function drawLine(
      >      
        <Box sx={{ display: "flex", alignItems:"left", gap: "2px" }}>
          
-        <Typography variant="body 2" fontSize="8px" noWrap>
-        {values.caption}
+        <Typography variant="body 2" fontSize="8px" color="white" noWrap>
+        {values.reelsCaption}
         </Typography>
       </Box>       
     </Box>     : null } 
 
      {/*IG Filter ELEMENTS */}  
 
+     
+
      {template==="images/filter.png"  ?<Box   border
     sx={{ zIndex:"95", pointerEvents:"none",position:"absolute" , bottom:"9%" ,left:"50", borderRadius:"20px",paddingLeft:"10px",paddingRight:"10px" ,paddingTop:"4px",paddingBottom:"4px" ,borderColor:"red"}}
      >      
-     <Typography  sx={{color:"white",fontSize:"9px",fontWeight:"bold"}}>Filter Name</Typography>
+     <Typography  sx={{color:"white",fontSize:"9px",fontWeight:"bold"}}>{values.filterName}</Typography>
     </Box>     : null }
 
     {/*DP1 ZINDEX= 110 */}
     {template==="images/filter.png"  ?
-    <Box sx={{zIndex:"110",position:'absolute' ,bottom:"82px",left:"52" }}>
-      <img style={{objectFit:"cover", width:"40px",height:"40px",borderRadius:"50%", }}src={mockup?mockup?.imageUrl:`images/car1.png`}></img>
+    <Box sx={{zIndex:"110",position:'absolute' ,bottom:"82px",left:"106.5px" }}>
+      <img style={{objectFit:"cover", width:"40px",height:"40px",borderRadius:"50%", }} src={iconPic? iconPic:values.iconUrl}></img>
     </Box>  : null }
     
 
@@ -314,6 +318,8 @@ function drawLine(
 
    
     </Box>
+
+    {/*Tool Panel*/}
 
 <Box  sx={{ width:"100%", stroke:"10" , display:"flex",justifyContent:"center"}}>
     <ButtonGroup   disableElevation  

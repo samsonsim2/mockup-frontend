@@ -11,6 +11,7 @@ import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
  
+ 
 //stockImages 
 
  // Form data 
@@ -49,11 +50,15 @@ const MockupDetails = () => {
 
 
     const{
-      //MOCKUP DETAILS
-      profileInput,
+      //Picture inputs
+       profileInput,
        setProfileInput,
        profilePic,
        setProfilePic,
+       iconPic,
+       setIconPic,
+       iconInput,
+       setIconInput,
        
       selectedMockup,
       setSelectedMockup,
@@ -88,6 +93,8 @@ useEffect(()=>{
   setAddYoursSticker(false)
   setProfilePic("")
   setProfileInput("")
+  setIconPic("")
+  setIconInput("")
   
 },[])
 
@@ -116,90 +123,134 @@ const save= async (event) => {
       setProfileInput(url)
       async function createAsset(){      
         const res = await axios.patch(`${BACKEND_URL}/mockup/edit/${selectedMockup}`,{                       
-           userName:values.brandName,imageUrl:url}).then((res)=>{  
-
-                       
+           userName:values.brandName,imageUrl: url}).then((res)=>{                         
             console.log(res.data)          
            })
           }
      createAsset()
    
     }) }
-    // Update Feed
-    const res = await axios.patch(`${BACKEND_URL}/mockup/feed`,{                       
+
+
+    const UpdateIcon =()=>{
+      const fileName = generateImageName(iconInput?.name);        
+      const storageRef = sRef(storage, `images/${fileName}`);  
+      
+      uploadBytes(storageRef, iconInput)
+      .then((snapshot) => {
+         
+        return getDownloadURL(snapshot.ref);
+        
+        
+      })    .then((url) => {       
+        setProfileInput(url)
+        async function createAsset(){      
+          const res = await axios.patch(`${BACKEND_URL}/mockup/filter`,{                       
+             mockupId:selectedMockup,filterName:values.filterName,iconUrl: url}).then((res)=>{                         
+              console.log(res.data)          
+             })
+            }
+       createAsset()
+     
+      }) }
+  
+
+  async function UpdateBrandName(){      
+      const res = await axios.patch(`${BACKEND_URL}/mockup/edit/${selectedMockup}`,{                       
+         userName:values.brandName,imageUrl: values.profileUrl}).then((res)=>{                         
+          console.log(res.data)          
+         })
+        }
+  
+ 
+
+    //Update profile Photo  ( have to split into 2 because update profile has undefined inputs when empty)
+    if(profileInput){
+      UpdateProfile()      
+    }else{
+   //Update just the Brand Name
+    UpdateBrandName()         
+    }
+    
+   // Update Feed
+    const feed = await axios.patch(`${BACKEND_URL}/mockup/feed`,{                       
       mockupId:values.mockupId,caption:values.caption,cta:values.cta}).then((res)=>{
       console.log(res.data)          
      })
-    
-
-  
-    UpdateProfile()
-
+  //Update Story 
+  const story = await axios.patch(`${BACKEND_URL}/mockup/story`,{                       
+    mockupId:values.mockupId,location:values.location,tag:values.addYours,cta:values.storiesCta}).then((res)=>{
+    console.log(res.data)          
+   })
    
+
+   //Update Filter 
+
+ if(iconInput){
+  UpdateIcon()  
+
+ }else{
+  const filter = await axios.patch(`${BACKEND_URL}/mockup/filter`,{                       
+    mockupId:values.mockupId,filterName:values.filterName,iconUrl:values.iconUrl}).then((res)=>{
+    console.log(res.data)          
+   })
+  
+ }
+  
+    
  
 } 
 
 const handleProfilePicInput = (event) => {
   event.preventDefault()
-  setProfileInput(event.target.files[0])
-   
-  setProfilePic(URL.createObjectURL(event.target.files[0]));
-
-  
+  setProfileInput(event.target.files[0])   
+  setProfilePic(URL.createObjectURL(event.target.files[0]));  
 };
 
+const handleIconPicInput = (event) => {
+  event.preventDefault()
+  setIconInput(event.target.files[0])   
+  setIconPic(URL.createObjectURL(event.target.files[0]));  
+};
+
+// Creates temporary display for the new screen image added 
 const handleImageInput =   async (event) => {
   event.preventDefault()
-  console.log("handle image input")
-  console.log(event.target.files[0].name)
-   setFileInput(event.target.files[0])
-
-  // console.log(e.target.value)
-  const tempUrl = URL.createObjectURL(event.target.files[0])
-  // console.log(tempUrl)
+  setFileInput(event.target.files[0])  
+  const tempUrl = URL.createObjectURL(event.target.files[0]) 
   setImagesArray([...imagesArray,tempUrl])
 
-  const uploadFile =()=>{
-    const fileName = generateImageName(fileInput?.name);
-    
-    
-    const storageRef = sRef(storage, `images/${fileName}`);
-  
-    //Reset the preview link
-    uploadBytes(storageRef, fileInput)
-    .then((snapshot) => {
-      return getDownloadURL(snapshot.ref);
-    })
-    .then((url) => {
-       
-      setFileInput("")
-      async function createAsset(){      
-        const res = await axios.post(`${BACKEND_URL}/mockup/createAsset`,{                       
-            mockupId:values.mockupId,imageUrl:url}).then((res)=>{   
+  // const uploadFile =()=>{
+  //   const fileName = generateImageName(fileInput?.name);        
+  //   const storageRef = sRef(storage, `images/${fileName}`);
+  //   //Reset the preview link
+  //   uploadBytes(storageRef, fileInput)
+  //   .then((snapshot) => {
+  //     return getDownloadURL(snapshot.ref);
+  //   })
+  //   .then((url) => {
+  //     setFileInput("")
+  //     async function createAsset(){      
+  //       const res = await axios.post(`${BACKEND_URL}/mockup/createAsset`,{                       
+  //           mockupId:values.mockupId,imageUrl:url}).then((res)=>{   
                        
-            console.log(res.data)          
-           })
-          }
-     createAsset()
+  //           console.log(res.data)          
+  //          })
+  //         }
+  //    createAsset()
+  //    }) 
+  // }
+
+  // uploadFile()
    
-    }) 
-  }
-
-  uploadFile()
- 
-
-  
 };
 
+// Uploads new screen image to database 
 useEffect(()=>{
   const uploadFile =()=>{
-    const fileName = generateImageName(fileInput?.name);
-    
-    
+    const fileName = generateImageName(fileInput?.name);    
     const storageRef = sRef(storage, `images/${fileName}`);
-  
-    //Reset the preview link
-    uploadBytes(storageRef, fileInput)
+     uploadBytes(storageRef, fileInput)
     .then((snapshot) => {
       return getDownloadURL(snapshot.ref);
     })
@@ -220,20 +271,17 @@ useEffect(()=>{
 
   if(fileInput){
     uploadFile()
-
   }
-
-  
-
 },[fileInput])
 
-// END OF FUNCTIONS ---------------------
-  return (
+ 
+
+return (
 <Box  width="100%"   backgroundColor="white"  padding="20px"  sx={{borderTopLeftRadius:"20px",borderBottomLeftRadius:"20px"}}>
 
 {/*Template selection */}
     <Stack direction="row" spacing="20px" marginBottom="20px">
-      <Typography sx={{alignSelf:"center"}}>Formats:</Typography>
+      <Typography sx={{alignSelf:"center",fontWeight:"bold"}}>Formats:</Typography>
       <Button variant="contained"  onClick={()=>{setTemplate("images/feed.png");setSafeZone(false);setLocationSticker(false); setAddYoursSticker(false)}}>Feed</Button>
       <Button variant="contained" onClick={()=>setTemplate("images/story.png")}>Story</Button>
       <Button variant="contained" onClick={()=>{setTemplate("images/reels.png");setLocationSticker(false); setAddYoursSticker(false)}}>Reels</Button>
@@ -293,17 +341,12 @@ useEffect(()=>{
 
 {testArray.map((image,index)=>{
     return <Box key={index} component="img"  src={image.imageUrl} sx={{width:"40px", height:"40px",objectFit:"cover",borderRadius:"10px",cursor:"pointer"}}
-    onClick={ ()=>{     
-   
+    onClick={ ()=>{        
      setStock({imageUrl:image.imageUrl,croppedImageUrl:null})
      setCropReset(!cropReset)
-     console.log(image)
-    
-    }}
-     
-     
-     >
-        
+     console.log(image)    
+    }}     
+     >        
     </Box>
    
 
@@ -336,21 +379,81 @@ useEffect(()=>{
  <Typography>Contrast</Typography>
  <Slider  min={0} max={2} step={0.1}  value={filterValues?.contrast}  onChange={(e)=>setFilterValues({...filterValues,contrast:e.target.value})}/>
 
-<Button variant="contained"  onClick={(e)=>setFilterValues({
+<Button variant="contained"  sx={{display:"block",marginBottom:"20px"}} onClick={(e)=>setFilterValues({
     brightness:1,
     saturation:1,
     contrast:1
   })}>Reset</Button>  
-{/*FORM */}
+{/*Details*/}
+
+{/*Filter icon*/}
+{template==="images/filter.png" ? 
+<Box>
+<Typography sx={{fontWeight:"bold", mb:"10px"}}>Filter Icon:</Typography>
+      <Badge 
+        overlap="circular"
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right'  }}
+        badgeContent={          
+          <SmallAvatar alt="Remy Sharp"  >
+
+            <FormLabel htmlFor="icon-upload"  sx={{cursor: 'pointer', backgroundColor:"black",width:"100%",display:"flex",justifyContent:"center"  }}>
+                  <AddIcon sx={{  width:"80%", margin:"auto", color:"white"}}/>
+            </FormLabel>
+             <Input 
+                type="file"
+                id="icon-upload"
+                accept="image/jpg, image/png"
+                onChange={handleIconPicInput}     
+                sx={{display:"none"}} 
+                >               
+
+            </Input>
+          </SmallAvatar>
+        }
+      >
+       
+        <Avatar  sx={{ width:"50px",height:"50px"}}src={iconPic  ? iconPic  : values.iconUrl}/>
+        </Badge>
+  </Box>    :null}
+
+
     <Stack direction="column" spacing="20px">
     <Typography sx={{fontWeight:"bold",mt:"20px"}}>Details:</Typography>
     <TextField  id="outlined-basic" label="Brand username" variant="outlined" name="brandName" value={values.brandName} onChange={handleChange}/>
+    {/*FEED*/}
+      
+   
+     
     {template==="images/feed.png" ?
     <TextField id="outlined-basic" label="Caption" variant="outlined"  name="caption" value={values.caption} onChange={handleChange} 
     />   : null}
-    <TextField id="outlined-basic" label="Call to action"  name="cta" value={values.cta} onChange={handleChange} variant="outlined" />
+    {template==="images/feed.png" ?
+    <TextField id="outlined-basic" label="Call to action"  name="cta" value={values.cta} onChange={handleChange} variant="outlined" />  
+    : null}
+
+
+
+    {/*REELS*/}
+    {  template==="images/reels.png" ?
+    <TextField id="outlined-basic" label="Caption(Reels)" variant="outlined"  name="reelsCaption" value={values.reelsCaption} onChange={handleChange} 
+    />  :null}
+
+    {template==="images/reels.png" ?
+    <TextField id="outlined-basic" label="Cta(Reels)" variant="outlined"  name="reelsCta" value={values.reelsCta} onChange={handleChange} 
+    />  :null}
+
+    {/*FILTERS*/}
+    
+    {template==="images/filter.png" ?
+    <TextField id="outlined-basic" label="Filter Name" variant="outlined"  name="filterName" value={values.filterName} onChange={handleChange} 
+    />   : null}
+    
     </Stack>
 {/*Sticker*/}
+
+{template==="images/story.png" ?
+    <TextField sx={{mt:"20px"}}id="outlined-basic" label="Call to action"  name="storiesCta" value={values.storiesCta} onChange={handleChange} variant="outlined" />  
+    : null}
 {template==="images/story.png"  ?<Box>
 <Stack direction="row" display="flex" alignItems="center">
 <Typography>Location Sticker</Typography>

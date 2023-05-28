@@ -20,7 +20,11 @@ const AppProvider = ({ children }) => {
     brandName:"",
     storiesCta:"Learn moree",
     location:"Location",
-    addYours:"write prompt"
+    addYours:"write prompt",
+    filterName:"fitler",
+    iconUrl:"iconURLTEST",
+    reelsCta:"",
+    reelsCaption:"",
   
   }
   const stockImages =[
@@ -54,9 +58,14 @@ const [selectedMockup,setSelectedMockup]=useState(null)
 const [mockup,setMockup] = useState() 
 
 
-
+// Image uploads 
 const [ profileInput,setProfileInput]= useState("")
-    const [profilePic,setProfilePic] = useState()
+const [profilePic,setProfilePic] = useState()
+const [ iconInput,setIconInput]=useState()
+const [iconPic,setIconPic]=useState()
+
+
+
   const [template,setTemplate]=useState("images/feed.png")
   const [values,setValues] = useState(initDetails) 
   const [filterValues,setFilterValues] = useState(filters)
@@ -113,6 +122,10 @@ const [testArray,setTestArray] = useState([])
        setProfileInput,
        profilePic,
        setProfilePic,
+       iconInput,
+       setIconInput,
+       setIconPic,
+       iconPic,
        
        
         onCancel,

@@ -42,13 +42,21 @@ function Mockup() {
     async function getMockup(){      
       const res = await axios.get(`${BACKEND_URL}/mockup/edit/${selectedMockup}` ).then((res)=>{
               setMockup(res.data)
+               console.log(res.data)
               setValues({...values,
-                cta:res.data.Feeds[0].cta,
-                caption:res.data.Feeds[0].caption,
+                cta:res.data?.Feeds[0]?.cta,
+                reelsCta:res.data?.Reels[0]?.cta,
+                reelsCaption:res.data?.Reels[0]?.caption,
+                location:res.data?.Stories[0]?.location,
+                addYours:res.data?.Stories[0]?.tag,
+                storiesCta:res.data?.Stories[0]?.cta,
+                caption:res.data.Feeds[0]?.caption,
+                filterName:res.data.Filters[0]?.filterName,
+                iconUrl:res.data.Filters[0]?.iconUrl,
                 brandName:res.data.userName,
                 mockupId:res.data.id,
                 profileUrl:res.data.imageUrl})
-              console.log(res.data)
+ 
               const assets = axios.post(`${BACKEND_URL}/mockup/getAsset`,{                       
                 mockupId:res.data.id}) .then((assets)=>{
                   console.log(assets)
@@ -70,9 +78,9 @@ function Mockup() {
   return (<>
       <NavBar/>
   
-  <Box width="100%" height="100vh"   display="flex" sx={{  background: `#E7EBF0`}} >
+  <Box width="100%" height="100%"   display="flex" sx={{  background: `#E7EBF0`,p:"80px"}} >
 
-    <Box width="80%"   borderRadius="20px" height="fit-content" margin="20px auto" display="flex" flexDirection="row"  justifyContent="space-between"   boxShadow= '1'   >
+    <Box width="80%"   borderRadius="20px" height="fit-content" margin="  auto" display="flex" flexDirection="row"  justifyContent="space-between"   boxShadow= '1'   >
    
     <MockupDetails/>
     <MockupPreview/>
