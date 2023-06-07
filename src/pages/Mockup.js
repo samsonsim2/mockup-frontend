@@ -1,21 +1,40 @@
 import logo from '../logo.svg';
 import '../App.css';
 import { useEffect, useRef, useState } from 'react';
-import ImageCropDialog from '../components/ImageCropDialog';
+ 
 import html2canvas from 'html2canvas';
 import { Box, Button, Input, Stack, Typography } from '@mui/material';
 import TextField from '@mui/material/TextField';
- import Canvas from '../components/DrawingCanvas';
-import   { useOnDraw } from '../components/Hooks';
+ import Canvas from '../components/mockupComponents/DrawingCanvas';
+import   { useOnDraw } from '../components//mockupComponents/Hooks';
 import Draggable from 'react-draggable'; // The default
 import axios from 'axios';
 import { useAppContext } from '../context/appContext';
 import { BACKEND_URL } from '../constants';
-import ImageCanvas from '../components/ImageCanvas';
-import MockupDetails from '../components/MockupDetails';
-import MockupPreview from '../components/MockupPreview';
+import ImageCanvas from '../components//mockupComponents/ImageCanvas';
+import MockupDetails from '../components/mockupComponents/MockupDetails';
+import MockupPreview from '../components/mockupComponents/MockupPreview';
  import NavBar from '../components/sharedComponents/Navbar'
- 
+ import MuiAppBar from '@mui/material/AppBar';
+ import { styled, useTheme } from '@mui/material/styles';
+import ImageCropDialog from '../components/mockupComponents/ImageCropDialog';
+ const drawerWidth = 240;
+ const AppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== 'open',
+})(({ theme, open }) => ({
+  transition: theme.transitions.create(['margin', 'width'], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  ...(open && {
+    width: `calc(100% - ${drawerWidth}px)`,
+    marginLeft: `${drawerWidth}px`,
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  }),
+}));
  // initial Image 
 const initData = 
   {
@@ -30,7 +49,7 @@ const initData =
 function Mockup() {
 
   
-  const{testArray,setTestArray,selectedMockup,template,setTemplate,values,setValues,mockup,setMockup,imagesArray,setImagesArray}= useAppContext() 
+  const{accessToken,testArray,setAssetArray,selectedMockup,template,setTemplate,values,setValues,mockup,setMockup,imagesArray,setImagesArray}= useAppContext() 
 
 
  
@@ -39,8 +58,11 @@ function Mockup() {
 
   useEffect(()=>{
     
+
     async function getMockup(){      
-      const res = await axios.get(`${BACKEND_URL}/mockup/edit/${selectedMockup}` ).then((res)=>{
+      const res = await axios.get(`${BACKEND_URL}/mockup/edit/${selectedMockup}`  , {headers: {
+        Authorization: `Bearer ${accessToken}`,
+      }}).then((res)=>{
               setMockup(res.data)
                console.log(res.data)
               setValues({...values,
@@ -57,10 +79,11 @@ function Mockup() {
                 mockupId:res.data.id,
                 profileUrl:res.data.imageUrl})
  
-              const assets = axios.post(`${BACKEND_URL}/mockup/getAsset`,{                       
-                mockupId:res.data.id}) .then((assets)=>{
+              const assets = axios.get(`${BACKEND_URL}/mockup/asset/${selectedMockup}`, {headers: {
+                Authorization: `Bearer ${accessToken}`,
+              }}) .then((assets)=>{
                   console.log(assets)
-                  setTestArray(assets.data)
+                  setAssetArray(assets.data)
                    
                 })
               
@@ -76,7 +99,12 @@ function Mockup() {
 
 
   return (<>
-      <NavBar/>
+   
+  <AppBar>
+    <NavBar/>
+  </AppBar>
+  
+      
   
   <Box width="100%" height="100%"   display="flex" sx={{  background: `#E7EBF0`,p:"80px"}} >
 

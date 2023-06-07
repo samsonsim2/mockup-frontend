@@ -52,6 +52,8 @@ const AppProvider = ({ children }) => {
 //AUTHENTICATION INFO
 const [currentUserId, setCurrentUserId] = useState("");
 const [open, setOpen] = React.useState(false);
+const[accessToken,setAccessToken]= useState("")
+
 //MOCKUP DATA
 const[userMockups,setUserMockups]=useState([])
 const [selectedMockup,setSelectedMockup]=useState(null)
@@ -59,46 +61,40 @@ const [mockup,setMockup] = useState()
 
 
 // Image uploads 
-const [ profileInput,setProfileInput]= useState("")
-const [profilePic,setProfilePic] = useState()
-const [ iconInput,setIconInput]=useState()
-const [iconPic,setIconPic]=useState()
-
-
-
-  const [template,setTemplate]=useState("images/feed.png")
+  const [ profileInput,setProfileInput]= useState("")
+  const [profilePic,setProfilePic] = useState()
+  const [ iconInput,setIconInput]=useState()
+  const [iconPic,setIconPic]=useState()
   const [values,setValues] = useState(initDetails) 
-  const [filterValues,setFilterValues] = useState(filters)
-  const [isDrawing,setIsDrawing] = useState(false)
-  const [locationSticker,setLocationSticker]=useState(false)
-  const [addYoursSticker,setAddYoursSticker]=useState(false)
   const [imagesArray,setImagesArray] = useState(stockImages)
-const [testArray,setTestArray] = useState([])
-  const[cropReset,setCropReset]=useState(true)
- 
+  const [assetArray,setAssetArray] = useState([])
 
-  const initData =   {
-     
+  const initData =   {     
     imageUrl:stockImages[0],
     croppedImageUrl:null
   } 
-
   const [stock,setStock] =useState(initData)
   const [selectedStock,setSelectedStock] = useState(null) 
-  const [safeZone,setSafeZone]=useState(false)
- 
+
+// Canvas Elements
+const [filterValues,setFilterValues] = useState(filters)
+const [isDrawing,setIsDrawing] = useState(false)
+const [locationSticker,setLocationSticker]=useState(false)
+const [addYoursSticker,setAddYoursSticker]=useState(false)
+const [template,setTemplate]=useState("images/feed.png")
+const[cropReset,setCropReset]=useState(true)
+const [safeZone,setSafeZone]=useState(false)
+
   const onCancel =()=>{
     setSelectedStock(null)
         
   }
-
   const  setCroppedImageFor =(crop,zoom,aspect,croppedImageUrl)=>{      
     const newStock = {...stock, croppedImageUrl,crop,zoom,aspect}
     console.log(newStock )
     setStock(newStock)
     setSelectedStock(null)  
   }
-
   const resetImage = ( )=>{
     setCroppedImageFor()
   }
@@ -116,8 +112,12 @@ const [testArray,setTestArray] = useState([])
        //Authentication Info
        currentUserId,
        setCurrentUserId,
+       accessToken,
+       setAccessToken,
 
        //MOCKUPDETAILS
+       setValues,
+       values,
        profileInput,
        setProfileInput,
        profilePic,
@@ -126,23 +126,28 @@ const [testArray,setTestArray] = useState([])
        setIconInput,
        setIconPic,
        iconPic,
-       
-       
-        onCancel,
-        setCroppedImageFor,
-        resetImage,
-       safeZone,
-       setSafeZone,
+       mockup,
+       setMockup,
        userMockups,
        setUserMockups,
+       imagesArray,
+       setImagesArray,
+       assetArray,
+       setAssetArray,
+
+
+
+       
+       // Canvas 
+       onCancel,
+       setCroppedImageFor,
+       resetImage,
+       safeZone,
+       setSafeZone,       
        selectedMockup,
        setSelectedMockup,
        template,
-       setTemplate,
-       setValues,
-       values,
-       mockup,
-       setMockup,
+       setTemplate,     
        filterValues,
        setFilterValues,       
        stock,
@@ -158,10 +163,8 @@ const [testArray,setTestArray] = useState([])
        setAddYoursSticker,
        addYoursSticker,
        cropReset,
-       setCropReset,imagesArray,
-       setImagesArray,
-       testArray,
-       setTestArray
+       setCropReset,
+       
         
       }}
     >

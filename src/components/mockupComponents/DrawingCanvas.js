@@ -1,8 +1,9 @@
 import { Box, Button, alpha } from '@mui/material';
 import {useOnDraw} from './Hooks';
 import { useEffect, useState } from 'react';
-import { useAppContext } from '../context/appContext';
+ 
 import zIndex from '@mui/material/styles/zIndex';
+import { useAppContext } from '../../context/appContext';
     
 const Canvas = ({
     width,

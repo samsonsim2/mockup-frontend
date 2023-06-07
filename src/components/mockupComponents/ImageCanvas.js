@@ -1,7 +1,7 @@
 import { Box, Button } from '@mui/material';
 import React, { useRef, useEffect, useState } from 'react';
 import ImageCropDialog from './ImageCropDialog';
-import { useAppContext } from '../context/appContext';
+import { useAppContext } from '../../context/appContext';
  
  
 function ImageCanvas() {

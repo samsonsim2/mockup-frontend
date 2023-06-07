@@ -1,87 +1,3 @@
-// import { Box, Button, Card, Grid } from '@mui/material'
-// import React, { useEffect, useState } from 'react'
-// import { useAppContext } from '../context/appContext' 
-// import axios from "axios";
-// import { useAuth0 } from "@auth0/auth0-react"; 
-// import { BACKEND_URL } from '../constants';
-// import SharingForm from '../components/SharingForm';
-// import UserMockups from '../components/UserMockups';
-// import SharedMockups from '../components/SharedMockups';
-  
-// const Dashboard = () => {
-//   const { user,isAuthenticated,getAccessTokenSilently } = useAuth0();    
-//   const {userMockups,setUserMockups,setCurrentUserId,currentUserId}=useAppContext()
-//   const [dashboardView,setDashboardView] = useState("sharedMockups")
-
-// useEffect(()=>{
-//     if(isAuthenticated){
-      
-//     async function getToken(){
-//             let token = await getAccessTokenSilently();
-        
-//             const {email,given_name,family_name}=user
-            
-//             const res = await axios.post(`${BACKEND_URL}/auth/register`, {                       
-//                 email:email,firstName:given_name,lastName:family_name },{
-//                 headers: {
-//                   Authorization: `Bearer ${token}`,
-//                 }},).then((res)=>{
-//                     console.log(res.data)
-//                     setCurrentUserId(res.data.id)                       
-//                 })              
-//      }  
-     
-//      getToken()  
-//     }          
-// },[isAuthenticated,getAccessTokenSilently])
-
-  
-// useEffect(()=>{
-
-//     // GET mockups CREATED by user 
-//     if(currentUserId && dashboardView==="userMockups"){
-//       async function getMockups(){      
-//         const res = await axios.get(`${BACKEND_URL}/mockup/${currentUserId}`).then((res)=>{
-//                 setUserMockups(res.data)          
-//            })    
-//     }    
-//     getMockups()
-//     }
-
-//     // GET mockups SHARED by user
-//     if(currentUserId && dashboardView==="sharedMockups"){
-//       async function getSharedMockups(){      
-//         const res = await axios.get(`${BACKEND_URL}/mockup/sharedmockups/${currentUserId}`).then((res)=>{
-//                 setUserMockups(res.data)                     
-//            })      
-//     }    
-//     getSharedMockups()
-//     }
-//   },[currentUserId,dashboardView])
-
-
-//   return (
-//     <Box width="100%" height="100vh" sx={{backgroundColor:"red"}}>
-//     <Box display="flex" width="100%" height="100%">
-//       <Box width="20%" sx={{backgroundColor:"black"}}> </Box>
-//       <Box minWidth="300px"></Box>
-//     </Box>
-//     <Box><Button onClick={()=>{setDashboardView("userMockups")}}>My Mockups</Button>
-//     <Button onClick={()=>{setDashboardView("sharedMockups")}}>Shared Mockups</Button></Box>
-    
-   
-//     {/* {dashboardView === "userMockups"?<UserMockups/>:null}
-//     {dashboardView === "sharedMockups"?<SharedMockups/>:null} */}
-//     </Box>
-   
-    
-//   )
-// }
-
-// export default Dashboard
-
-
-
 import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -105,7 +21,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import { useAuth0 } from "@auth0/auth0-react"; 
 import axios from "axios"; 
 import { BACKEND_URL } from '../constants';
-import { useEffect, useState } from 'react'
+import { useEffect, useState,useRef } from 'react'
 import NavBar from '../components/sharedComponents/Navbar';
 import { useAppContext } from '../context/appContext';
 import { Button, Card, CardActions, CardContent, CardMedia, Fab, Stack } from '@mui/material';
@@ -122,7 +38,7 @@ import { useNavigate } from 'react-router';
 import ShareIcon from '@mui/icons-material/Share';
 import WorkIcon from '@mui/icons-material/Work';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
- 
+
  
 const menu = [
   ["My mockups",  <WorkIcon  />],
@@ -184,7 +100,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
  const { user,isAuthenticated,getAccessTokenSilently } = useAuth0();    
- const {setProfilePic,setProfileInput,setUserMockups,setCurrentUserId,currentUserId,userMockups,selectedMockup,setSelectedMockup}=useAppContext()
+ const {accessToken,setAccessToken,setProfilePic,setProfileInput,setUserMockups,setCurrentUserId,currentUserId,userMockups,selectedMockup,setSelectedMockup}=useAppContext()
 
   //Check Mobile view
  const isMobile = useMobileView();
@@ -200,21 +116,21 @@ export default function Dashboard() {
  
   // Dashboard View 
   const [dashboardView,setDashboardView] = useState("My mockups")
+  const [token,setToken]= useState("My mockups")
 
 // Get jwt token + set currentUserId
   useEffect(()=>{
     if(isAuthenticated){
       
     async function getToken(){
-            let token = await getAccessTokenSilently();
+            let accessToken = await getAccessTokenSilently();
+            setAccessToken(accessToken)
         
             const {email,given_name,family_name}=user
             
             const res = await axios.post(`${BACKEND_URL}/auth/register`, {                       
-                email:email,firstName:given_name,lastName:family_name },{
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                }},).then((res)=>{
+                email:email,firstName:given_name,lastName:family_name }).then((res)=>{
+                   
                      
                     setCurrentUserId(res.data.id)                       
                 })              
@@ -226,12 +142,19 @@ export default function Dashboard() {
 },[isAuthenticated,getAccessTokenSilently])
 
   
-useEffect(()=>{
+useEffect( ()=>{
 
     // GET mockups CREATED by user 
-    if(currentUserId && dashboardView==="My mockups"){
+    if(currentUserId && dashboardView==="My mockups" && accessToken){
+      
       async function getMockups(){      
-        const res = await axios.get(`${BACKEND_URL}/mockup/${currentUserId}`).then((res)=>{
+         
+        console.log(accessToken)
+        const res = await axios.get(`${BACKEND_URL}/mockup/${currentUserId}` , {headers: {
+          Authorization: `Bearer ${accessToken}`,
+        }}
+        ).then((res)=>{
+            console.log(token)
                 setUserMockups(res.data)   
                 console.log(res.data)       
            })    
@@ -240,16 +163,21 @@ useEffect(()=>{
     }
 
     // GET mockups SHARED by user
-    if(currentUserId && dashboardView==="Shared mockups"){
+    if(currentUserId && dashboardView==="Shared mockups"  && accessToken){
       async function getSharedMockups(){      
-        const res = await axios.get(`${BACKEND_URL}/mockup/sharedmockups/${currentUserId}`).then((res)=>{
+         
+        console.log(accessToken)
+        const res = await axios.get(`${BACKEND_URL}/mockup/sharedmockups/${currentUserId}`, {headers: {
+          Authorization: `Bearer ${accessToken}`,
+        }} 
+        ).then((res)=>{
                 setUserMockups(res.data)    
                 console.log(res.data)                    
            })      
     }    
     getSharedMockups()
     }
-  },[currentUserId,dashboardView])
+  },[currentUserId,dashboardView,accessToken])
 
 
 

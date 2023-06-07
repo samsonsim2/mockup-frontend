@@ -3,11 +3,10 @@ import React, { useEffect, useRef, useState } from 'react'
 import DrawingCanvas from './DrawingCanvas'
 import ImageCanvas from './ImageCanvas'
 import Draggable from 'react-draggable'
-import { useAppContext } from '../context/appContext'
+import { useAppContext } from '../../context/appContext';
 import html2canvas from 'html2canvas'
 import {useOnDraw} from './Hooks';
-import axios from 'axios'
-import { BACKEND_URL } from '../constants'
+import axios from 'axios' 
 import CropIcon from '@mui/icons-material/Crop';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import DrawIcon from '@mui/icons-material/Draw';
@@ -20,6 +19,7 @@ import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";      
 
 import { ColorPicker } from 'primereact/colorpicker';
+import { BACKEND_URL } from '../../constants'
               
  
 const MockupPreview = () => {
@@ -137,14 +137,15 @@ function drawLine(
     
      {/* Sticker*/} 
      {locationSticker && template==="images/story.png" ?<Draggable bounds="parent" defaultPosition={{x:250/2-25,y:500/2 -50}} >
-                <Box sx={{ maxWidth:"150px",display:"flex", justifyContent:"center" ,flexDirection:"row",position:"absolute",backgroundColor:"white",paddingLeft:"10px",paddingRight:"10px", paddingTop:"5px",paddingBottom:"5px",borderRadius:"5px"}}>
+                <Box sx={{ cursor:"pointer",maxWidth:"150px",display:"flex", justifyContent:"center" ,flexDirection:"row",position:"absolute",backgroundColor:"white",paddingLeft:"10px",paddingRight:"10px", paddingTop:"5px",paddingBottom:"5px",borderRadius:"5px"}}>
                      <LocationOnIcon sx={{color:"purple"  }}/><Typography sx={{color:"blue" }}>{values.location}</Typography>
                 </Box>
         </Draggable>:null}   
 
         {addYoursSticker&& template==="images/story.png" ?<Draggable bounds="parent" defaultPosition={{x:250/2-25,y:500/2 -50}} >
-                <Box sx={{ position:"absolute",backgroundColor:"white",p:"5px",borderRadius:"5px"}}>
-                    <Typography>{values.addYours}</Typography>
+                <Box  sx={{ position:"absolute",cursor:"pointer" }}>
+                    <img style={{width:"100px"}}src="images/addYours.png"></img>
+                    <Typography sx={{ position:"absolute" , top:10,left:"25px",fontSize:"10px",textAlign:"center"}}>{values.addYours}</Typography>
                 </Box>
         </Draggable>:null}   
         

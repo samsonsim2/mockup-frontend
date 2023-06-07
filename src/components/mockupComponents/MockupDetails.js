@@ -1,16 +1,17 @@
 import { Avatar, Badge, Box, Button, FormLabel, Input, Slider, Stack, Switch, TextField, Typography } from '@mui/material'
-import { useAppContext } from '../context/appContext'
+import { useAppContext } from '../../context/appContext';
 import { useEffect, useState } from 'react'
 import axios from "axios";
-import { BACKEND_URL } from '../constants';
-import { storage } from '../firebase';
-import { generateImageName } from './utils';
+import { BACKEND_URL } from '../../constants';
+import { storage } from '../../firebase';
+import { generateImageName } from '../utils';
 import { uploadBytes, getDownloadURL, ref as sRef } from "firebase/storage";
 import AddIcon from '@mui/icons-material/Add';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
- 
+import DeleteIcon from '@mui/icons-material/Delete';
+import DeletableBox from './DeletableBox';
  
 //stockImages 
 
@@ -81,10 +82,12 @@ const MockupDetails = () => {
       filterValues,
 
     imagesArray,
-    testArray,
+    assetArray,
+    setAssetArray,
   setImagesArray}= useAppContext() 
 
     const [fileInput,setFileInput] = useState("")  
+    const[tempUpload,setTempUpload]= useState([])  
     
 //CLEAR ALL STATE WHEN PAGE FIRST LOADS
 useEffect(()=>{
@@ -95,6 +98,7 @@ useEffect(()=>{
   setProfileInput("")
   setIconPic("")
   setIconInput("")
+  setTempUpload([])
   
 },[])
 
@@ -171,6 +175,35 @@ const save= async (event) => {
    //Update just the Brand Name
     UpdateBrandName()         
     }
+
+
+  //Update Assets
+  // const uploadFile =()=>{
+  //   const fileName = generateImageName(fileInput?.name);    
+  //   const storageRef = sRef(storage, `images/${fileName}`);
+  //    uploadBytes(storageRef, fileInput)
+  //   .then((snapshot) => {
+  //     return getDownloadURL(snapshot.ref);
+  //   })
+  //   .then((url) => {
+       
+  //     setFileInput("")
+  //     async function createAsset(){      
+  //       const res = await axios.post(`${BACKEND_URL}/mockup/asset`,{                       
+  //           mockupId:values.mockupId,imageUrl:url}).then((res)=>{   
+                       
+  //           console.log(res.data)          
+  //          })
+  //         }
+  //    createAsset()
+   
+  //   }) 
+  // }
+
+  // if(fileInput){
+     
+  //   uploadFile()
+  // }
     
    // Update Feed
     const feed = await axios.patch(`${BACKEND_URL}/mockup/feed`,{                       
@@ -218,31 +251,10 @@ const handleImageInput =   async (event) => {
   event.preventDefault()
   setFileInput(event.target.files[0])  
   const tempUrl = URL.createObjectURL(event.target.files[0]) 
-  setImagesArray([...imagesArray,tempUrl])
+ 
+  setTempUpload([...tempUpload,tempUrl])
 
-  // const uploadFile =()=>{
-  //   const fileName = generateImageName(fileInput?.name);        
-  //   const storageRef = sRef(storage, `images/${fileName}`);
-  //   //Reset the preview link
-  //   uploadBytes(storageRef, fileInput)
-  //   .then((snapshot) => {
-  //     return getDownloadURL(snapshot.ref);
-  //   })
-  //   .then((url) => {
-  //     setFileInput("")
-  //     async function createAsset(){      
-  //       const res = await axios.post(`${BACKEND_URL}/mockup/createAsset`,{                       
-  //           mockupId:values.mockupId,imageUrl:url}).then((res)=>{   
-                       
-  //           console.log(res.data)          
-  //          })
-  //         }
-  //    createAsset()
-  //    }) 
-  // }
-
-  // uploadFile()
-   
+  
 };
 
 // Uploads new screen image to database 
@@ -258,7 +270,7 @@ useEffect(()=>{
        
       setFileInput("")
       async function createAsset(){      
-        const res = await axios.post(`${BACKEND_URL}/mockup/createAsset`,{                       
+        const res = await axios.post(`${BACKEND_URL}/mockup/asset`,{                       
             mockupId:values.mockupId,imageUrl:url}).then((res)=>{   
                        
             console.log(res.data)          
@@ -319,7 +331,7 @@ return (
         </Badge>
 
 {/*Stock Image*/}
-<Typography sx={{fontWeight:"bold",mt:"20px"}}>Assets:</Typography>
+<Typography sx={{fontWeight:"bold",mt:"20px"}}>Stock assets:</Typography>
 
 <Stack direction="row" spacing={1}>
 {imagesArray.map((image,index)=>{
@@ -339,21 +351,30 @@ return (
 
 })}
 
-{testArray.map((image,index)=>{
-    return <Box key={index} component="img"  src={image.imageUrl} sx={{width:"40px", height:"40px",objectFit:"cover",borderRadius:"10px",cursor:"pointer"}}
-    onClick={ ()=>{        
-     setStock({imageUrl:image.imageUrl,croppedImageUrl:null})
-     setCropReset(!cropReset)
-     console.log(image)    
-    }}     
-     >        
-    </Box>
+
+ </Stack>
+
+
+{/*Uploaded Image*/}
+ <Typography sx={{fontWeight:"bold",mt:"20px"}}>My assets:</Typography>
+<Stack direction="row" spacing={1}>
+
+  
+{assetArray.map((image,index)=>{
+    return  <DeletableBox image={image.imageUrl} id={image.id} index={index} key={index} array={assetArray} setArray={setAssetArray} />
+    
    
 
 })}
- </Stack>
 
- <Input 
+{tempUpload.map((image,index)=>{
+  return <DeletableBox image={image} index={index} key={index} array={tempUpload} setArray={setTempUpload}/>
+ })}
+</Stack>
+ 
+ 
+
+ <Input  sx={{display:"block",mt:"10px"}}
                 type="file"
                 id="file-upload"
                 accept="image/jpg, image/png"
