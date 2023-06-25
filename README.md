@@ -1,8 +1,8 @@
-# Getting Started with Create React App
+# Mockup Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Full-stack web app that allows users to create mockups for various Instagram ad formats, making it easier for non-creatives with no software knowledge to 
 
-## Available Scripts
+## Content 
 
 In the project directory, you can run:
 
