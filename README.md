@@ -1,8 +1,9 @@
 # Mockup Frontend
 
-Full-stack web app that allows users to create mockups for various Instagram ad formats, making it easier for non-creatives with no software knowledge to 
 
-## Content 
+Full-stack web app that allows users to create mock-ups for various Instagram ad formats, making it easier for non-creatives with no software knowledge to create mock-ups for pitches and client presentation
+
+## Context
 
 In the project directory, you can run:
 
