@@ -52,7 +52,7 @@ const Landing = () => {
     <Button  ref={el => (elementRefs.current[3] = el)} sx={{marginTop:"40px"}} variant="contained"
     onClick={()=> {const user = loginWithRedirect( {
       authorizationParams: {
-       redirect_uri: "http://localhost:3001/dashboard",
+       redirect_uri: "https://mockup-frontend-theta.vercel.app/dashboard",
        }})           
     }}
     > Get Started</Button>
